@@ -1507,9 +1507,12 @@ program.command('mint-dft')
       const config: ConfigurationInterface = validateCliInputs();
       ticker = ticker.toLowerCase();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let walletRecord = resolveWalletAliasNew(walletInfo, options.initialowner, walletInfo.primary);
+      const targetAddress = options.initialowner;
+      if (!targetAddress) {
+        throw 'No target wallet address found';
+      }
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
-      const result: any = await atomicals.mintDftInteractive(walletRecord.address, ticker, fundingRecord.WIF, {
+      const result: any = await atomicals.mintDftInteractive(targetAddress, ticker, fundingRecord.WIF, {
         satsbyte: parseInt(options.satsbyte),
         disableMiningChalk: options.disablechalk
       });
